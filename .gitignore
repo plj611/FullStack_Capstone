@@ -1,0 +1,23 @@
+migrations/
+tmp/
+venv/
+.vscode/
+__pycache__/
+test.db
+node_modules/
+startback.sh
+*.txt
+*.db
+*.bak
+*.swp
+!requirements.txt
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
