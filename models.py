@@ -29,7 +29,7 @@ class Movie(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
-    date_release = db.Column(db.DateTime)
+    date_release = db.Column(db.Date)
     actors = db.relationship('Actor', secondary=association_table, 
                                 backref=db.backref('movies'))
 
@@ -59,7 +59,7 @@ class Movie(db.Model):
         return {
             'id': self.id, 
             'title': self.title,
-            'date_release': self.date_release,
+            'date_release': self.date_release.strftime('%Y%m%d'),
             'actors_id': self.get_actors(),
         }
 
