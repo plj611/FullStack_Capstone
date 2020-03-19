@@ -50,7 +50,6 @@ def get_movies():
 
 @APP.route('/actors/<int:actor_id>', methods=['DELETE'])
 def delete_actor(actor_id):
-  error = None
   
   try:
     actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
@@ -77,7 +76,7 @@ def delete_actor(actor_id):
     
       
 @APP.errorhandler(404)
-def unprocessable(error):
+def resouce_not_found(error):
     return jsonify({
                     "success": False, 
                     "error": 404,
