@@ -20,8 +20,8 @@ class Gender(enum.Enum):
     female = 'F'
 
 association_table = db.Table('association',
-    db.Column('movie_id', db.Integer, db.ForeignKey('movie.id'), nullable=True),
-    db.Column('actor_id', db.Integer, db.ForeignKey('actor.id'), nullable=False)
+    db.Column('movie_id', db.Integer, db.ForeignKey('movie.id')),
+    db.Column('actor_id', db.Integer, db.ForeignKey('actor.id'))
 )
 
 class Movie(db.Model):
@@ -101,3 +101,10 @@ class Actor(db.Model):
             'gender': self.gender.value,
             'movies_id': self.get_movies(),
         }
+
+@db.event.listens_for(db.session, "after_flush")
+def after_flush(session, flush_context):
+    print("After flush.......")
+    session.query(Movie).\
+        filter(~Movie.actors.any()).\
+        delete(synchronize_session=False)
