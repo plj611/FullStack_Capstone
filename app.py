@@ -1,4 +1,5 @@
 import os
+import datetime
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -142,6 +143,46 @@ def add_actor():
   return jsonify({
         'success': True,
         'actor_id': actor.id,
+  })
+
+def check_actors_exist(actors_id):
+
+  actors = Actor.query.filter(Actor.id.in_(actors_id)).all()
+  if len(actors) == len(actors_id):
+    return actors
+  else:
+    return None
+
+@APP.route('/movies', methods=['POST'])
+def add_movie():
+  body = request.get_json()
+
+  if not body:
+    abort(400)
+  else:
+    title = body.get('title')
+    date_release = body.get('date_release')
+    actors_id = list(set(body.get('actors_id', [])))
+
+  if title is None or date_release is None or actors_id == []:
+    abort(400)
+  else:
+    # determine all the actors exist
+    actors = check_actors_exist(actors_id)
+    if actors:
+      try:
+        date_release = datetime.datetime.strptime(date_release, '%Y%m%d').date()
+        #print(f'{title} {date_release} {actors_id} {actors}')
+        movie = Movie(title=title, date_release=date_release, actors=actors)
+        movie.insert()
+      except:
+        abort(422)
+    else:
+      abort(404)
+
+  return jsonify({
+      'success': True,
+      'movie_id': movie.id,
   })
 
 @APP.errorhandler(400)
