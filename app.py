@@ -129,7 +129,7 @@ def add_actor():
     # determine all the movies exist
     movies = check_movies_exist(movies_id)
     #print(movies)
-    if movies:
+    if movies is not None or movies_id == []:
       try:
         print(f'{name} {age} {gender} {movies}')
         actor = Actor(name=name, age=age, gender=Gender(gender))
@@ -184,6 +184,20 @@ def add_movie():
       'success': True,
       'movie_id': movie.id,
   })
+'''
+@APP.route('/actors/<int:actor_id>', methods=['PATCH'])
+def update_actor():
+  body = request.get_json()
+
+  if not body:
+    abort(400)
+  else:
+    name = body.get('name')
+    age = body.get('age')
+    gender = body.get('gender')
+    movies_id = list(set(body.get('movies_id', [])))
+
+'''
 
 @APP.errorhandler(400)
 def bad_request(error):
