@@ -230,6 +230,48 @@ def update_actor(actor_id):
         'actor_id': actor.id,
   })
 
+@APP.route('/movies/<int:movie_id>', methods=['PATCH'])
+def update_movie(movie_id):
+  body = request.get_json()
+
+  if not body:
+    abort(400)
+  else:
+    title = body.get('title')
+    date_release = body.get('date_release')
+    actors_id = list(set(body.get('actors_id', []))) 
+
+  if title is None or date_release is None or actors_id == []:
+    abort(400)
+  else:
+    # determine all the actors exist
+    actors = check_actors_exist(actors_id)
+    if actors:
+      try:
+        movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
+      except:
+        abort(422)
+      if movie:
+        try:
+          movie.title = title
+          movie.date_release = datetime.datetime.strptime(date_release, '%Y%m%d').date()
+          movie.actors = actors
+          movie.update()
+        except:
+          abort(422)
+      else:
+        #print('1')
+        abort(404)
+    else:
+      #print('2')
+      abort(404)
+
+  return jsonify({
+        'success': True,
+        'movie_id': movie.id,
+  })
+
+
 @APP.errorhandler(400)
 def bad_request(error):
     return jsonify({
