@@ -123,7 +123,7 @@ def add_actor():
     gender = body.get('gender')
     movies_id = list(set(body.get('movies_id', [])))
 
-  if name is None or age is None:
+  if name is None or age is None or gender is None:
     abort(400)
   else:
     # determine all the movies exist
@@ -184,9 +184,9 @@ def add_movie():
       'success': True,
       'movie_id': movie.id,
   })
-'''
+
 @APP.route('/actors/<int:actor_id>', methods=['PATCH'])
-def update_actor():
+def update_actor(actor_id):
   body = request.get_json()
 
   if not body:
@@ -197,7 +197,38 @@ def update_actor():
     gender = body.get('gender')
     movies_id = list(set(body.get('movies_id', [])))
 
-'''
+  if name is None or age is None or gender is None:
+    abort(400)
+  else:
+    # determine all the movies exist
+    movies = check_movies_exist(movies_id)
+    #print(movies)
+    if movies is not None or movies_id == []:
+      print(f'{name} {age} {gender} {movies}')
+      try:
+        actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
+      except:
+        abort(422)
+      if actor:
+        try:
+          actor.name = name
+          actor.age = age
+          actor.gender = Gender(gender)
+          actor.movies = movies
+          actor.update()
+        except:
+          abort(422)
+      else:
+        #print('1')
+        abort(404)
+    else:
+      #print('2')
+      abort(404)
+
+  return jsonify({
+        'sussess': True,
+        'actor_id': actor.id,
+  })
 
 @APP.errorhandler(400)
 def bad_request(error):
