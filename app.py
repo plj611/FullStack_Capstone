@@ -99,7 +99,59 @@ def delete_movie(movie_id):
             'delete': movie_id,
             'success': True,
   })
-    
+
+def check_movies_exist(movies_id):
+
+  movies = Movie.query.filter(Movie.id.in_(movies_id)).all()
+  #print(movies_id)
+  #print(movies)
+  if len(movies) == len(movies_id):
+    return movies
+  else:
+    return None 
+
+@APP.route('/actors', methods=['POST'])
+def add_actor():
+  body = request.get_json()
+
+  if not body:
+    abort(400)
+  else:
+    name = body.get('name')
+    age = body.get('age')
+    gender = body.get('gender')
+    movies_id = list(set(body.get('movies_id', [])))
+
+  if name is None or age is None:
+    abort(400)
+  else:
+    # determine all the movies exist
+    movies = check_movies_exist(movies_id)
+    #print(movies)
+    if movies:
+      try:
+        print(f'{name} {age} {gender} {movies}')
+        actor = Actor(name=name, age=age, gender=Gender(gender))
+        actor.movies = movies
+        actor.insert()
+      except:
+        abort(422)
+    else:
+      abort(404)
+
+  return jsonify({
+        'success': True,
+        'actor_id': actor.id,
+  })
+
+@APP.errorhandler(400)
+def bad_request(error):
+    return jsonify({
+                    "success": False, 
+                    "error": 400,
+                    "message": "bad request"
+                    }), 400
+
 @APP.errorhandler(404)
 def resouce_not_found(error):
     return jsonify({
