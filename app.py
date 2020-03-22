@@ -70,7 +70,7 @@ def delete_actor(actor_id):
     abort(404)
 
   return jsonify({
-            'delete': actor_id,
+            'actor_id': actor_id,
             'success': True,
   })
     
@@ -96,7 +96,7 @@ def delete_movie(movie_id):
     abort(404)
 
   return jsonify({
-            'delete': movie_id,
+            'movie_id': movie_id,
             'success': True,
   })
 
