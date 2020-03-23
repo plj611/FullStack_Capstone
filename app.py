@@ -17,6 +17,12 @@ def create_app(test_config=None):
 APP = create_app()
 
 # ADD PAGINATION??
+@APP.route('/', methods=['GET'])
+def check_health():
+  return jsonify({
+      'success': True,
+      'path': os.getenv('DATABASE_URI')
+  })
 
 @APP.route('/actors', methods=['GET'])
 def get_actors():
