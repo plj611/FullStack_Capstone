@@ -10,7 +10,8 @@ def create_app(test_config=None):
   app = Flask(__name__)
   CORS(app)
   #setup_db(app, os.getenv('SQLALCHEMY_DATABASE_URI'))
-  setup_db(app, os.getenv('DATABASE_URI'))
+  #setup_db(app, os.getenv('DATABASE_URI'))
+  setup_db(app, os.environ['DATABASE_URI'])
 
   return app
 
@@ -21,7 +22,7 @@ APP = create_app()
 def check_health():
   return jsonify({
       'success': True,
-      'path': os.getenv('DATABASE_URI')
+      'path': os.environ['DATABASE_URI']
   })
 
 @APP.route('/actors', methods=['GET'])
