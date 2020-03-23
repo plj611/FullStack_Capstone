@@ -9,7 +9,8 @@ def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
   CORS(app)
-  setup_db(app, os.getenv('SQLALCHEMY_DATABASE_URI'))
+  #setup_db(app, os.getenv('SQLALCHEMY_DATABASE_URI'))
+  setup_db(app, os.getenv('DATABASE_URI'))
 
   return app
 
