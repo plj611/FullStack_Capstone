@@ -7,7 +7,7 @@ from urllib.request import urlopen
 
 AUTH0_DOMAIN = 'dev20.auth0.com'
 ALGORITHMS = ['RS256']
-API_AUDIENCE = 'myapi'
+API_AUDIENCE = 'ndfs_capstone'
 
 ## AuthError Exception
 '''
