@@ -30,7 +30,7 @@ def check_health():
 
 @APP.route('/actors', methods=['GET'])
 @requires_auth('get:actors')
-def get_actors():
+def get_actors(payload):
 
   try:
     ans = Actor.query.all()
@@ -47,7 +47,7 @@ def get_actors():
 
 @APP.route('/movies', methods=['GET'])
 @requires_auth('get:movies')
-def get_movies():
+def get_movies(payload):
 
   try:
     ans = Movie.query.all()
