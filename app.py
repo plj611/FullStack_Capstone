@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from models import setup_db, Actor, Gender, Movie
 
+from auth import AuthError, requires_auth
+
 def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
@@ -304,6 +306,13 @@ def unprocessable(error):
                     "message": "unprocessable"
                     }), 422
 
+@APP.errorhandler(AuthError)
+def auth_error(error):
+    return jsonify({
+                    "success": False,
+                    "error": error.status_code,
+                    "message": error.error['description']
+                    }), error.status_code
 
 if __name__ == '__main__':
     APP.run(host='0.0.0.0', port=8080, debug=True)
