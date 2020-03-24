@@ -24,10 +24,12 @@ APP = create_app()
 def check_health():
   return jsonify({
       'success': True,
-      'path': os.environ['DATABASE_URL']
+      'healthy': True,
+      #'path': os.environ['DATABASE_URL']
   })
 
 @APP.route('/actors', methods=['GET'])
+@requires_auth('get:actors')
 def get_actors():
 
   try:
@@ -44,6 +46,7 @@ def get_actors():
   })
 
 @APP.route('/movies', methods=['GET'])
+@requires_auth('get:movies')
 def get_movies():
 
   try:
@@ -60,6 +63,7 @@ def get_movies():
   })
 
 @APP.route('/actors/<int:actor_id>', methods=['DELETE'])
+@requires_auth('delete:actor')
 def delete_actor(actor_id):
   
   try:
@@ -86,6 +90,7 @@ def delete_actor(actor_id):
   })
     
 @APP.route('/movies/<int:movie_id>', methods=['DELETE'])
+@requires_auth('delete:movie')
 def delete_movie(movie_id):
   
   try:
@@ -122,6 +127,7 @@ def check_movies_exist(movies_id):
     return None 
 
 @APP.route('/actors', methods=['POST'])
+@requires_auth('post:actor')
 def add_actor():
   body = request.get_json()
 
@@ -164,6 +170,7 @@ def check_actors_exist(actors_id):
     return None
 
 @APP.route('/movies', methods=['POST'])
+@requires_auth('post:movie')
 def add_movie():
   body = request.get_json()
 
@@ -196,6 +203,7 @@ def add_movie():
   })
 
 @APP.route('/actors/<int:actor_id>', methods=['PATCH'])
+@requires_auth('patch:actor')
 def update_actor(actor_id):
   body = request.get_json()
 
@@ -241,6 +249,7 @@ def update_actor(actor_id):
   })
 
 @APP.route('/movies/<int:movie_id>', methods=['PATCH'])
+@requires_auth('patch:movie')
 def update_movie(movie_id):
   body = request.get_json()
 
