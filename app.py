@@ -64,7 +64,7 @@ def get_movies(payload):
 
 @APP.route('/actors/<int:actor_id>', methods=['DELETE'])
 @requires_auth('delete:actor')
-def delete_actor(actor_id):
+def delete_actor(payload, actor_id):
   
   try:
     actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
@@ -91,7 +91,7 @@ def delete_actor(actor_id):
     
 @APP.route('/movies/<int:movie_id>', methods=['DELETE'])
 @requires_auth('delete:movie')
-def delete_movie(movie_id):
+def delete_movie(payload, movie_id):
   
   try:
     movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
@@ -128,7 +128,7 @@ def check_movies_exist(movies_id):
 
 @APP.route('/actors', methods=['POST'])
 @requires_auth('post:actor')
-def add_actor():
+def add_actor(payload):
   body = request.get_json()
 
   if not body:
@@ -171,7 +171,7 @@ def check_actors_exist(actors_id):
 
 @APP.route('/movies', methods=['POST'])
 @requires_auth('post:movie')
-def add_movie():
+def add_movie(payload):
   body = request.get_json()
 
   if not body:
@@ -204,7 +204,7 @@ def add_movie():
 
 @APP.route('/actors/<int:actor_id>', methods=['PATCH'])
 @requires_auth('patch:actor')
-def update_actor(actor_id):
+def update_actor(payload, actor_id):
   body = request.get_json()
 
   if not body:
@@ -250,7 +250,7 @@ def update_actor(actor_id):
 
 @APP.route('/movies/<int:movie_id>', methods=['PATCH'])
 @requires_auth('patch:movie')
-def update_movie(movie_id):
+def update_movie(payload, movie_id):
   body = request.get_json()
 
   if not body:
