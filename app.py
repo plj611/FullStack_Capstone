@@ -307,6 +307,14 @@ def resouce_not_found(error):
                     "message": "resource not found"
                     }), 404
 
+@APP.errorhandler(405)
+def method_not_allow(error):
+    return jsonify({
+		                "success": False,
+		                "error": 405,
+		                "message": "method not allow"
+		                }), 405
+
 @APP.errorhandler(422)
 def unprocessable(error):
     return jsonify({
@@ -314,6 +322,14 @@ def unprocessable(error):
                     "error": 422,
                     "message": "unprocessable"
                     }), 422
+
+@APP.errorhandler(500)
+def internal_server_error(error):
+    return jsonify({
+                		"success": False,
+		                "error": 500,
+		                "message": "internal server error"
+		                }), 500 
 
 @APP.errorhandler(AuthError)
 def auth_error(error):
