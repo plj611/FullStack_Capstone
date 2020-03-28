@@ -1,6 +1,7 @@
 import os
 import unittest
 import json
+import datetime
 #from flask_sqlalchemy import SQLAlchemy
 
 from app import create_app
@@ -113,7 +114,6 @@ class CapstoneTestCase(unittest.TestCase):
         a = Actor.query.filter(Actor.id == a_id).one_or_none()
         self.assertIsNotNone(a)
     
-    '''
     @add_jwt_header('producer')
     def test_add_movie(self, headers):
 
@@ -128,13 +128,69 @@ class CapstoneTestCase(unittest.TestCase):
                                             }),
                                             content_type='application/json')
         data = json.loads(res.data)
-        print(data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         m_id = data['movie_id']
         m = Movie.query.filter(Movie.id == m_id).one_or_none()
         self.assertIsNotNone(m)
-    '''
+    
+    @add_jwt_header('director')
+    def test_patch_actor(self, headers):
+
+        a = Actor(name='Lars Larsson', age=38, gender=Gender('M'))
+        a.insert()
+        a_id = a.id
+
+        #
+        # change age to 40
+        #
+        res = self.client().patch(f'/actors/{a_id}', headers=headers,
+                                                     data=json.dumps({
+                                                        'name': 'Lars Larsson',
+                                                        'age': 40,
+                                                        'gender': 'M'
+                                                     }),
+                                                     content_type='application/json')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(a_id, data['actor_id'])
+
+        #
+        # check age is changed
+        #
+        a = Actor.query.filter(Actor.id == a_id).one_or_none()
+        self.assertEqual(a.age, 40)
+
+    @add_jwt_header('director')
+    def test_patch_movie(self, headers):
+
+        a = Actor(name='Lars Larsson', age=38, gender=Gender('M'))
+        a.insert()
+
+        m = Movie(title='Genesis II', date_release='20200320', actors=[a])
+        m.insert()
+
+        #
+        # change date_release
+        #
+        res = self.client().patch(f'/movies/{m.id}', headers=headers,
+                                                      data=json.dumps({
+                                                            'title': 'Genesis II',
+                                                            'date_release': '20200328',
+                                                            'actors_id': [a.id]
+                                                      }),
+                                                      content_type='application/json')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(m.id, data['movie_id'])
+
+        # 
+        # check date is changed
+        #
+        m1 = Movie.query.filter(Movie.id == m.id).one_or_none()
+        self.assertEqual(m1.date_release, datetime.datetime.strptime('20200328', '%Y%m%d').date())
 
     '''
     def test_get_categories(self):
