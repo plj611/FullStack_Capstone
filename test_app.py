@@ -7,57 +7,29 @@ from app import create_app
 from models import Actor, Movie, Gender
 
 class CapstoneTestCase(unittest.TestCase):
-    """This class represents the trivia test case"""
 
     def setUp(self):
-        """Define test variables and initialize app."""
+
         self.app = create_app(os.environ['TEST_DATABASE_URL'])
         self.client = self.app.test_client
+        self.assistant_jwt = os.environ['ASSISTANT_JWT']
+        self.director_jwt = os.environ['DIRECTOR_JWT']
+        self.producer_jwt = os.environ['PRODUCER_JWT']
 
-        a1 = Actor(name='PPP', age=23, gender=Gender('M'))
-        a1.insert()
-        '''
-        self.client = self.app.test_client
-        self.database_name = "trivia_test"
-        self.database_path = "postgres://{}/{}".format('pl704206:phm123@localhost:5432', self.database_name)
-        setup_db(self.app, self.database_path)
+        a = Actor(name='Kenneth Torkel', age='30', gender=Gender('M'))
+        a.insert()
 
-        # binds the app to the current context
-        with self.app.app_context():
-            self.db = SQLAlchemy()
-            self.db.init_app(self.app)
-            # create all tables
-            self.db.create_all()
+        m = Movie(title='Genesis', date_release='20200328', actors=[a])
+        m.insert()
 
-        c1 = Category(type='science')
-        c2 = Category(type='art')
-        c3 = Category(type='geography')
-        c4 = Category(type='history')
-        c5 = Category(type='entertainment')
-        c6 = Category(type='sport')
-        db.session.add(c1)
-        db.session.add(c2)
-        db.session.add(c3)
-        db.session.add(c4)
-        db.session.add(c5)
-        db.session.add(c6)
-        db.session.commit()
-
-        q = Question(question='where is the 2020 coronavirus outbreak started?', answer='wuhan', category=1, difficulty=1)
-        q.insert()
-
-    '''
     def tearDown(self):
-        """Executed after reach test"""
-        '''
-        questions = Question.query.all()
-        [q.delete() for q in questions]
-        pass
 
-        categories = Category.query.all()
-        [db.session.delete(c) for c in categories]
-        db.session.commit()
-        '''
+        actors = Actor.query.all()
+        [a.delete() for a in actors]
+
+        movies = Movie.query.all()
+        [m.delete() for m in movies]
+
         pass
 
     """
@@ -65,10 +37,65 @@ class CapstoneTestCase(unittest.TestCase):
     Write at least one test for each test for successful operation and for expected errors.
     """
 
-
+    def add_jwt_header(role):
+        def add_jwt_header_decorator(f):
+            def wrapper(self):
+                if role == 'assistant':
+                    h = ['bearer', self.assistant_jwt]
+                elif role == 'director':
+                    h = ['bearer', self.director_jwt]
+                elif role == 'producer':
+                    h = ['bearer', self.producer_jwt]
+                else:
+                    h = ['bearer', self.assistant_jwt]
+                headers = {'Authorization': ' '.join(h)}
+                f(self, headers)
+            return wrapper
+        return add_jwt_header_decorator
+    
     def test_base(self):
         res = self.client().get('/')
         self.assertEqual(res.status_code, 200)
+
+    '''
+    Test for success behavior of each endpoint
+    '''
+
+    @add_jwt_header('assistant')
+    def test_get_actors(self, headers):
+
+        res = self.client().get('/actors', headers=headers)
+        self.assertEqual(res.status_code, 200)
+
+    @add_jwt_header('assistant')
+    def test_get_movies(self, headers):
+
+        res = self.client().get('/movies', headers=headers)
+        self.assertEqual(res.status_code, 200)
+
+    @add_jwt_header('director')
+    def test_delete_actor(self, headers):
+
+        a_id = Actor.query.all()[0].id
+        res = self.client().delete(f'/actors/{a_id}', headers=headers)
+        data = json.loads(res.data)
+        a = Actor.query.filter(Actor.id == f'{a_id}').one_or_none()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(a, None)
+
+    @add_jwt_header('producer')
+    def test_delete_movie(self, headers):
+
+        m_id = Movie.query.all()[0].id
+        res = self.client().delete(f'/movies/{m_id}', headers=headers)
+        data = json.loads(res.data)
+        m = Movie.query.filter(Movie.id == f'{m_id}').one_or_none()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(m, None)
 
     '''
     def test_get_categories(self):
@@ -76,7 +103,7 @@ class CapstoneTestCase(unittest.TestCase):
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
+        self.assertEqual(data['success'], Tre)
 
     def test_405_method_not_allow_get_categories(self):
         res = self.client().post('/categories')
