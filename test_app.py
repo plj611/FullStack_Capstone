@@ -206,6 +206,29 @@ class CapstoneTestCase(unittest.TestCase):
         res = self.client().get('/movies')
         self.assertEqual(res.status_code, 401)
 
+    @add_jwt_header('director')
+    def test_404_actor_does_not_exist_delete_actor(self, headers):
+
+        #
+        # delete actor with actor id = 10000
+        #
+        res = self.client().delete('/actors/10000', headers=headers)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+
+    @add_jwt_header('producer')
+    def test_404_movie_does_not_exist_delete_movie(self, headers):
+
+        #
+        # delete movie with movie id = 10000
+        #
+        res = self.client().delete('/movies/10000', headers=headers)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+
+
     '''
     def test_get_categories(self):
         res = self.client().get('/categories')
