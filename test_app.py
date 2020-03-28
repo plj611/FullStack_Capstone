@@ -193,6 +193,20 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(m1.date_release, datetime.datetime.strptime('20200328', '%Y%m%d').date())
 
     '''
+    test of error behavior of each end point
+    '''
+
+    def test_401_authorization_header_missing_get_actors(self):
+
+        res = self.client().get('/actors')
+        self.assertEqual(res.status_code, 401)
+
+    def test_401_authorization_header_missing_get_movies(self):
+
+        res = self.client().get('/movies')
+        self.assertEqual(res.status_code, 401)
+
+    '''
     def test_get_categories(self):
         res = self.client().get('/categories')
         data = json.loads(res.data)
