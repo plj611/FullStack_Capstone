@@ -228,6 +228,38 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
 
+    @add_jwt_header('director')
+    def test_400_bad_input_request_post_actor(self, headers):
+
+        #
+        # post actor but with missing name
+        #
+        res = self.client().post('/actors', headers=headers,
+                                            data=json.dumps({
+                                                 'age': 45,
+                                                 'gender': 'M'
+                                            }),
+                                            content_type='application/json')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+
+    @add_jwt_header('producer')
+    def test_400_bad_input_request_post_movie(self, headers):
+
+        #
+        # post movie but with missing title
+        #
+        a = Actor.query.all()[0]
+        res = self.client().post('/movies', headers=headers,
+                                            data=json.dumps({
+                                                'release_date': '20200329',
+                                                'actors_id': [a.id]
+                                            }),
+                                            content_type='application/json')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
 
     '''
     def test_get_categories(self):
