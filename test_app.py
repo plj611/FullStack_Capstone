@@ -97,6 +97,45 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertEqual(m, None)
 
+    @add_jwt_header('director')
+    def test_add_actor(self, headers):
+
+        res = self.client().post('/actors', headers=headers,
+                                            data=json.dumps({
+                                                'name': 'Lars Larsson', 
+                                                'age': 38,
+                                                'gender': 'M'}), 
+                                            content_type='application/json')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        a_id = data['actor_id']
+        a = Actor.query.filter(Actor.id == a_id).one_or_none()
+        self.assertIsNotNone(a)
+    
+    '''
+    @add_jwt_header('producer')
+    def test_add_movie(self, headers):
+
+        a = Actor(name='Lars Larsson', age=38, gender=Gender('M'))
+        a.insert()
+        
+        res = self.client().post('/movies', headers=headers,
+                                            data=json.dumps({
+                                                'title': 'Genesis II',
+                                                'date_release': '20200328',
+                                                'actors_id': [a.id]
+                                            }),
+                                            content_type='application/json')
+        data = json.loads(res.data)
+        print(data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        m_id = data['movie_id']
+        m = Movie.query.filter(Movie.id == m_id).one_or_none()
+        self.assertIsNotNone(m)
+    '''
+
     '''
     def test_get_categories(self):
         res = self.client().get('/categories')
