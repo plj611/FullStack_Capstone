@@ -246,7 +246,7 @@ def create_app(db_url, test_config=None):
         abort(404)
 
     return jsonify({
-          'sussess': True,
+          'success': True,
           'actor_id': actor.id,
     })
 
