@@ -261,6 +261,40 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
 
+    @add_jwt_header('director')
+    def test_400_bad_input_request_patch_actor(self, headers):
+
+        #
+        # patch actor but with missing name
+        #
+        a = Actor.query.all()[0]
+        res = self.client().patch(f'/actors/{a.id}', headers=headers,
+                                                     data=json.dumps({
+                                                         'age': 45,
+                                                         'gender': 'M'
+                                                     }),
+                                                     content_type='application/json')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+
+    @add_jwt_header('producer')
+    def test_404_movie_does_not_exist_patch_movie(self, headers):
+
+        #
+        # patch movie which does not exist
+        #
+        res = self.client().patch('/movies/10000', headers=headers,
+                                                   data=json.dumps({
+                                                       'title': 'Super Hero',
+                                                       'date_release': '20200329',
+                                                       'actors_id': [1,2,3]
+                                                   }),
+                                                   content_type='application/json')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+
     '''
     def test_get_categories(self):
         res = self.client().get('/categories')
