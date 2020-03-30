@@ -306,7 +306,7 @@ class CapstoneTestCase(unittest.TestCase):
     '''
 
     @add_jwt_header('assistant')
-    def test_rbac_get_actors(self, headers):
+    def test_rbac_assistant_get_actors(self, headers):
 
         #
         # Casting assistant can get a list of actors
@@ -315,7 +315,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
 
     @add_jwt_header('assistant')
-    def test_rbac_401_action_forbidden_delete_actor(self, headers):
+    def test_rbac_401_action_assistant_forbidden_delete_actor(self, headers):
 
         #
         # Casting assistant does not allow delete actor
@@ -328,7 +328,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
 
     @add_jwt_header('director')
-    def test_rbac_post_actor(self, headers):
+    def test_rbac_director_post_actor(self, headers):
 
         #
         # Casting director can add actor
@@ -345,7 +345,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
 
     @add_jwt_header('director')
-    def test_rbac_401_action_forbidden_add_movie(self, headers):
+    def test_rbac_401_director_action_forbidden_add_movie(self, headers):
 
         #
         # Casting director does not allow to add movie
