@@ -363,6 +363,40 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Action forbidden.')
         self.assertEqual(data['success'], False)
 
+    @add_jwt_header('producer')
+    def test_rbac_producer_get_movies(self, headers):
+
+        #
+        # Executive producer can get the list of movies
+        #
+        res = self.client().get('/movies', headers=headers)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    @add_jwt_header('producer')
+    def test_rbac_producer_patch_actor(self, headers):
+
+        #
+        # Executive producer can modify actor
+        #
+        a = Actor.query.all()[0]
+
+        #
+        # Change age of the actor
+        #
+        print(f'{a.id} {a.name}')
+        res = self.client().patch(f'/actors/{a.id}', headers=headers,
+                                                     data=json.dumps({
+                                                         'name': a.name,
+                                                         'age': 88,
+                                                         'gender': 'M'
+                                                     }),
+                                                     content_type='application/json')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['actor_id'], a.id)
 
     '''
     def test_get_categories(self):
