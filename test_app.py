@@ -4,14 +4,18 @@ import json
 import datetime
 #from flask_sqlalchemy import SQLAlchemy
 
-from app import create_app
-from models import Actor, Movie, Gender
+#from app import create_app
+from app import APP
+from models import Actor, Movie, Gender, setup_db
 
 class CapstoneTestCase(unittest.TestCase):
 
     def setUp(self):
 
-        self.app = create_app(os.environ['TEST_DATABASE_URL'])
+        #self.app = create_app(os.environ['TEST_DATABASE_URL'])
+        self.app = APP
+        setup_db(self.app, os.environ['TEST_DATABASE_URL'])
+        #create_app(os.environ['TEST_DATABASE_URL'])
         self.client = self.app.test_client
         self.assistant_jwt = os.environ['ASSISTANT_JWT']
         self.director_jwt = os.environ['DIRECTOR_JWT']
@@ -398,137 +402,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertEqual(data['actor_id'], a.id)
 
-    '''
-    def test_get_categories(self):
-        res = self.client().get('/categories')
-        data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], Tre)
-
-    def test_405_method_not_allow_get_categories(self):
-        res = self.client().post('/categories')
-        data = json.loads(res.data)
-     
-        self.assertEqual(res.status_code, 405)
-        self.assertEqual(data['success'], False)
-
-    def test_get_questions(self):
-        res = self.client().get('/questions?category=1')
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['total_questions'], 1)
-        self.assertEqual(data['current_category'], 1)
-        self.assertEqual(data['success'], True)
-
-    def test_get_questions_with_searchTerm(self):
-        res = self.client().get('/questions?searchTerm=coronavirus')
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-        self.assertEqual(data['total_questions'], 1)
-        self.assertEqual(data['current_category'], 0)
-        
-    def test_404_get_questions_with_nonexist_category(self):
-        res = self.client().get('/questions?category=100')
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 404)
-        self.assertEqual(data['success'], False)
-   
-    def test_delete_question(self):
-        q_id = Question.query.all()[0].id
-        res = self.client().delete(f'/questions/{q_id}')
-        data = json.loads(res.data)
-        q = Question.query.filter(Question.id == f'{q_id}').one_or_none()
-
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-        self.assertEqual(q, None)
-
-    def test_422_delete_question(self):
-        res = self.client().delete('/questions/1000')
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 422)
-        self.assertEqual(data['success'], False)
-
-    def test_add_question(self):
-        res = self.client().post('/questions?searchTerm=null', json={'question': 'are dogs mammals?', 'answer': 'yes', 'category': 1, 'difficulty': 1})
-        data = json.loads(res.data)
-        q = Question.query.filter(Question.question == 'are dogs mammals?').one_or_none()
-
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-        self.assertEqual(q.question, 'are dogs mammals?')
-
-    def test_400_add_question(self):
-        res = self.client().post('/questions?searchTerm=null', json={'question': 'are dogs mammals?', 'answer': '', 'category': 1, 'difficulty': 1})
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['success'], False)
-
-    def test_search_questions(self):
-        res = self.client().post('/questions', json={'searchTerm': 'virus'})
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-        self.assertEqual(data['total_questions'], 1)
-
-    def test_400_no_searchTerm_search_questions(self):
-        res = self.client().post('/questions')
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['success'], False)
-
-    def test_404_no_result_search_questions(self):
-        res = self.client().post('/questions', json={'searchTerm': 'nonexist'})
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 404)
-        self.assertEqual(data['success'], False)
-
-    def test_get_questions_by_category(self):
-        res = self.client().get('/categories/1/questions')
-        data = json.loads(res.data)
-        
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-
-    def test_404_nonexist_category_get_questions_by_category(self):
-        res = self.client().get('/categories/100/questions')
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 404)
-        self.assertEqual(data['success'], False)
-
-    def test_play_quizzes(self):
-        res = self.client().post('/quizzes', json={'previous_questions': [1, 2], 'quiz_category': {'type': 'science', 'id': 0}})
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-
-    def test_400_non_exist_category_play_quizzes(self):
-        res = self.client().post('/quizzes', json={'previous_questions': [1, 2], 'quiz_category': {'type': 'mathematics', 'id':10}})
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['success'], False)
-    
-    def test_404_no_questions_play_quizzes(self):
-        res = self.client().post('/quizzes', json={'previous_questions': [1, 2], 'quiz_category': {'type': 'art', 'id':2}})
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 404)
-        self.assertEqual(data['success'], False)
-
-    '''
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
