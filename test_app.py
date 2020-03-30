@@ -59,7 +59,9 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
 
     '''
+
     Test for success behavior of each endpoint
+
     '''
 
     @add_jwt_header('assistant')
@@ -193,7 +195,9 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(m1.date_release, datetime.datetime.strptime('20200328', '%Y%m%d').date())
 
     '''
-    test of error behavior of each end point
+
+    Test of error behavior of each end point
+
     '''
 
     def test_401_authorization_header_missing_get_actors(self):
@@ -293,6 +297,34 @@ class CapstoneTestCase(unittest.TestCase):
                                                    content_type='application/json')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+
+    '''
+
+    Test of correct RBAC behavior for each role
+
+    '''
+
+    @add_jwt_header('assistant')
+    def test_rbac_get_actors(self, headers):
+
+        #
+        # Casting assistant can get a list of actors
+        #
+        res = self.client().get('/actors', headers=headers)
+        self.assertEqual(res.status_code, 200)
+
+    @add_jwt_header('assistant')
+    def test_rbac_401_action_forbidden_delete_actor(self, headers):
+
+        #
+        # Casting assistant does not allow delete actor
+        #
+        a = Actor.query.all()[0]
+        res = self.client().delete(f'/actors/{a.id}', headers=headers)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['message'], 'Action forbidden.')
         self.assertEqual(data['success'], False)
 
     '''
