@@ -327,6 +327,43 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Action forbidden.')
         self.assertEqual(data['success'], False)
 
+    @add_jwt_header('director')
+    def test_rbac_post_actor(self, headers):
+
+        #
+        # Casting director can add actor
+        #
+        res = self.client().post('/actors', headers=headers,
+                                            data=json.dumps({
+                                                'name': 'Lars Hedmark',
+                                                'age': 35,
+                                                'gender': 'M'
+                                            }),
+                                            content_type='application/json')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    @add_jwt_header('director')
+    def test_rbac_401_action_forbidden_add_movie(self, headers):
+
+        #
+        # Casting director does not allow to add movie
+        #
+        a = Actor.query.all()[0]
+        res = self.client().post('/movies', headers=headers,
+                                            data=json.dumps({
+                                                'title': 'Genesis III',
+                                                'date_release': '20200330',
+                                                'actors_id': [a.id]
+                                            }))
+
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['message'], 'Action forbidden.')
+        self.assertEqual(data['success'], False)
+
+
     '''
     def test_get_categories(self):
         res = self.client().get('/categories')
