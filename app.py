@@ -346,6 +346,9 @@ def update_movie(payload, movie_id):
         'movie_id': movie.id,
   })
 
+#
+# Error handler to format error as JSON object
+#
 
 @APP.errorhandler(400)
 def bad_request(error):
