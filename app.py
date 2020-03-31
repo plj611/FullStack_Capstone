@@ -192,6 +192,10 @@ def add_actor(payload):
   })
 
 def check_actors_exist(actors_id):
+  #
+  # Call by add_movie endpoint, it checks for the existence of the list actors_id,
+  # return Actor objects if all exist, otherwise return None
+  #  
 
   actors = Actor.query.filter(Actor.id.in_(actors_id)).all()
   if len(actors) == len(actors_id):
@@ -202,6 +206,12 @@ def check_actors_exist(actors_id):
 @APP.route('/movies', methods=['POST'])
 @requires_auth('post:movie')
 def add_movie(payload):
+  #
+  # Endpoint to add movie. Must provide title, date_release and actors_id,
+  # endpoint will check the existence of the actors_id provided, movie can be
+  # added if all actors_id exist
+  #
+
   body = request.get_json()
 
   if not body:
@@ -223,8 +233,10 @@ def add_movie(payload):
         movie = Movie(title=title, date_release=date_release, actors=actors)
         movie.insert()
       except:
+        # processing error
         abort(422)
     else:
+      # input error, some or all actors do not exist
       abort(404)
 
   return jsonify({
