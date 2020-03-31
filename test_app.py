@@ -21,6 +21,9 @@ class CapstoneTestCase(unittest.TestCase):
         self.director_jwt = os.environ['DIRECTOR_JWT']
         self.producer_jwt = os.environ['PRODUCER_JWT']
 
+        #
+        # Add one actor and movie for test
+        #
         a = Actor(name='Kenneth Torkel', age='30', gender=Gender('M'))
         a.insert()
 
@@ -29,6 +32,9 @@ class CapstoneTestCase(unittest.TestCase):
 
     def tearDown(self):
 
+        # 
+        # Clean up tables 
+        #
         actors = Actor.query.all()
         [a.delete() for a in actors]
 
@@ -37,11 +43,10 @@ class CapstoneTestCase(unittest.TestCase):
 
         pass
 
-    """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
-    """
 
+    #
+    # Decorator function to return bearer authorization token
+    #   
     def add_jwt_header(role):
         def add_jwt_header_decorator(f):
             def wrapper(self):
@@ -389,7 +394,7 @@ class CapstoneTestCase(unittest.TestCase):
         #
         # Change age of the actor
         #
-        print(f'{a.id} {a.name}')
+        #print(f'{a.id} {a.name}')
         res = self.client().patch(f'/actors/{a.id}', headers=headers,
                                                      data=json.dumps({
                                                          'name': a.name,
