@@ -26,9 +26,12 @@ def create_app():
 #APP = create_app(os.environ['DATABASE_URL'], test=False)
 APP = create_app()
 
-# ADD PAGINATION??
 @APP.route('/', methods=['GET'])
 def check_health():
+  #
+  # base endpoint without authentication for check app health
+  #
+
   return jsonify({
       'success': True,
       'healthy': True,
@@ -38,6 +41,10 @@ def check_health():
 @APP.route('/actors', methods=['GET'])
 @requires_auth('get:actors')
 def get_actors(payload):
+  #
+  # Endpoint to get the list of actors, requires get:actors permission
+  #
+
   try:
     ans = Actor.query.all()
     formatted_ans = []
@@ -46,7 +53,7 @@ def get_actors(payload):
   except:
     abort(422)
   return jsonify({
-          'actors': formatted_ans,      # Add page
+          'actors': formatted_ans,
           'total_actors': len(formatted_ans),
           'success': True,
   })
