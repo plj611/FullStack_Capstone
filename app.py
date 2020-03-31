@@ -61,6 +61,10 @@ def get_actors(payload):
 @APP.route('/movies', methods=['GET'])
 @requires_auth('get:movies')
 def get_movies(payload):
+  #
+  # Endpoint to get the list of movies, requires get:movies permission
+  #
+
   try:
     ans = Movie.query.all()
     formatted_ans = []
@@ -69,7 +73,7 @@ def get_movies(payload):
   except:
     abort(422)
   return jsonify({
-          'movies': formatted_ans,    # Add page
+          'movies': formatted_ans,
           'total_movies': len(formatted_ans),
           'success': True,
   })
@@ -77,13 +81,17 @@ def get_movies(payload):
 @APP.route('/actors/<int:actor_id>', methods=['DELETE'])
 @requires_auth('delete:actor')
 def delete_actor(payload, actor_id):
+  #
+  # Endpoint for delete actor by providing the actor id, requires delete:actor permission
+  #
+
   try:
     actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
   except:
     # processing error
     abort(422)
   if actor:
-    print('if')
+    #print('if')
     try:
       actor.delete()
     except:
@@ -91,7 +99,7 @@ def delete_actor(payload, actor_id):
       abort(422)
   else:
     # actor not found
-    print('else')
+    #print('else')
     abort(404)
   return jsonify({
             'actor_id': actor_id,
