@@ -10,7 +10,7 @@ from auth import AuthError, requires_auth
 def create_app():
   # create and configure the app
 
-  print(__name__)
+  #print(__name__)
   app = Flask(__name__)
   CORS(app)
   #setup_db(app, os.getenv('SQLALCHEMY_DATABASE_URI'))

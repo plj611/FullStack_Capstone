@@ -15,10 +15,17 @@ def setup_db(app, database_path):
     db.init_app(app)
     # db.create_all()
 
+#
+# Gender Enum type for actor
+#  
 class Gender(enum.Enum):
     male = 'M'
     female = 'F'
 
+#
+# The association table to handle the many to many relationship 
+# of Actor and Movie
+#
 association_table = db.Table('association',
     db.Column('movie_id', db.Integer, db.ForeignKey('movie.id')),
     db.Column('actor_id', db.Integer, db.ForeignKey('actor.id'))
@@ -102,9 +109,15 @@ class Actor(db.Model):
             'movies_id': self.get_movies(),
         }
 
+#
+# Event listener to check the table Movie and delete any movie
+# will does not have any actor assiociated with it
+#
+# https://stackoverflow.com/questions/9234082/setting-delete-orphan-on-sqlalchemy-relationship-causes-assertionerror-this-att
+#
 @db.event.listens_for(db.session, "after_flush")
 def after_flush(session, flush_context):
-    print("After flush.......")
+    #print("After flush.......")
     session.query(Movie).\
         filter(~Movie.actors.any()).\
         delete(synchronize_session=False)
