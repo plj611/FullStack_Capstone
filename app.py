@@ -35,6 +35,7 @@ def check_health():
   return jsonify({
       'success': True,
       'healthy': True,
+      'db': os.environ['DATABASE_URL']
       #'path': os.environ['DATABASE_URL']
   })
 
