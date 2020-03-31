@@ -109,13 +109,17 @@ def delete_actor(payload, actor_id):
 @APP.route('/movies/<int:movie_id>', methods=['DELETE'])
 @requires_auth('delete:movie')
 def delete_movie(payload, movie_id):
+  #
+  # Endpoint to delete movie by providing the movie id, requires delete:movie permission
+  #
+
   try:
     movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
   except:
     # processing error
     abort(422)
   if movie:
-    print('if')
+    #print('if')
     try:
       movie.delete()
     except:
@@ -123,7 +127,7 @@ def delete_movie(payload, movie_id):
       abort(422)
   else:
     # movie not found
-    print('else')
+    #print('else')
     abort(404)
   return jsonify({
             'movie_id': movie_id,
@@ -131,6 +135,10 @@ def delete_movie(payload, movie_id):
   })
 
 def check_movies_exist(movies_id):
+  #
+  # Called by add_actor enpoint, check the list of movies provided. Return the Movies objects if all exists, 
+  # otherwise return None
+  #  
 
   movies = Movie.query.filter(Movie.id.in_(movies_id)).all()
   #print(movies_id)
