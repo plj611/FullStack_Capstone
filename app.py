@@ -247,6 +247,11 @@ def add_movie(payload):
 @APP.route('/actors/<int:actor_id>', methods=['PATCH'])
 @requires_auth('patch:actor')
 def update_actor(payload, actor_id):
+  #
+  # Endpoint to update actor. name, age, gender must be provided. movies_id is optional,
+  # if provided, endpoint will check the existence of them. Actor can only be updated 
+  # if all the movies_id exist
+  #
   body = request.get_json()
 
   if not body:
@@ -264,7 +269,7 @@ def update_actor(payload, actor_id):
     movies = check_movies_exist(movies_id)
     #print(movies)
     if movies is not None or movies_id == []:
-      print(f'{name} {age} {gender} {movies}')
+      #print(f'{name} {age} {gender} {movies}')
       try:
         actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
       except:
@@ -280,9 +285,11 @@ def update_actor(payload, actor_id):
           abort(422)
       else:
         #print('1')
+        # The actor that going to be modified does not exist
         abort(404)
     else:
       #print('2')
+      # Some or all movies_id do not exist
       abort(404)
 
   return jsonify({
@@ -293,6 +300,11 @@ def update_actor(payload, actor_id):
 @APP.route('/movies/<int:movie_id>', methods=['PATCH'])
 @requires_auth('patch:movie')
 def update_movie(payload, movie_id):
+  #
+  # Endpoint to update movie. Must provide title, date_release and actors_id,
+  # endpoint will check the existence of the actors_id provided, movie can be
+  # updated if all actors_id exist
+  #
   body = request.get_json()
 
   if not body:
@@ -322,9 +334,11 @@ def update_movie(payload, movie_id):
           abort(422)
       else:
         #print('1')
+        # The movie going to be modified does not exist
         abort(404)
     else:
       #print('2')
+      # Some or all actors_id do not exist
       abort(404)
 
   return jsonify({
