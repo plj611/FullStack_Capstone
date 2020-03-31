@@ -151,6 +151,12 @@ def check_movies_exist(movies_id):
 @APP.route('/actors', methods=['POST'])
 @requires_auth('post:actor')
 def add_actor(payload):
+  #
+  # Endpoint to add actor. name, age, gender must be provided. movies_id is optional,
+  # if provided, endpoint will check the existence of them. Actor can only be added
+  # if all the movies_id exist
+  #
+
   body = request.get_json()
 
   if not body:
@@ -169,13 +175,15 @@ def add_actor(payload):
     #print(movies)
     if movies is not None or movies_id == []:
       try:
-        print(f'{name} {age} {gender} {movies}')
+        #print(f'{name} {age} {gender} {movies}')
         actor = Actor(name=name, age=age, gender=Gender(gender))
         actor.movies = movies
         actor.insert()
       except:
+        # processing error
         abort(422)
     else:
+      # input error, some or all movies do not exist
       abort(404)
 
   return jsonify({
