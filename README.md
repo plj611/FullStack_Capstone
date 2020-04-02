@@ -4,7 +4,7 @@
 
 This project is to streamline the management routines of actors and movies inside a fictitious casting agency. A backend API system is developed to simplify the create, delete, modify and query of them. 
 
-This section is about the general information of the casting agency that is modeled by the API backed system. The setup and technical description of the APIs and the information about how to access them, the excepted input and output can be accessed in the [Getting Started](## Getting Started) session.
+This section is about the general information of the casting agency that is modeled by the API backed system. The setup and technical description of the APIs and the information about how to access them, the excepted input and output can be accessed in the [Getting Started](#getting-started) session.
 
 The information that tracked for actor is:
 
