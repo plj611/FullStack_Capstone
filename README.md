@@ -2,26 +2,26 @@
 
 ## Introduction
 
-With the bloom in the recent filming industry, All Stars Casting Agency has been expanded so quickly that its managing director decides to invest more of its revenue in IT digitalization to handle the business expansion. This project is to streamline the management routines of actors and movies inside a casting agency. A backend API system is developed to simplify the create, delete, modify and query of them.
+With the bloom in the recent filming industry, All Stars Casting Agency has been expanded so quickly that its managing director decides to invest more into IT digitalization to handle the business expansion. This project is to streamline the management routines of actors and movies inside the casting agency. A backend API system is developed to simplify the create, delete, modify and query of them.
 
-This section is about the general information of the casting agency that is modeled by the API backed system. The setup and technical description of the APIs and the information about how to access them, the excepted input and output can be accessed in the [Getting Started](#getting-started) session.
+This section is about the general information of the casting agency that is modeled by the API backend system. The setup and technical description of the APIs and the information about how to access them, the excepted input and output can be accessed in the [Getting Started](#getting-started) session.
 
-The information that tracked for actor is:
+The information that tracked for actors is:
 
 - Name
 - Age
 - Gender
 - Movies which he/ she acts
 
-The information that tracked for movie is:
+The information that tracked for movies is:
 
 - Title
 - Release date
-- Actors which are in
+- Actors whose are in
 
 Note: To model the real world scenario, actor can exist without he/ she acting in any movie. On the contrary, movie cannot exist without any actors.
 
-Inside the casting agency, responsibilities are clearly defined and can be classified into three roles. The functions which are performed by each role are:
+Inside All Stars Casting Agency, responsibilities are clearly defined and can be classified into three roles. The functions which are performed by each role are:
 
 | Role               | Function                                                     |
 | ------------------ | ------------------------------------------------------------ |
@@ -35,11 +35,11 @@ Inside the casting agency, responsibilities are clearly defined and can be class
 
 #### Python 3.7
 
-Follow instructions to install the latest version of python for your platform in the [python docs](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python).
+Follow instructions to install the 3.7 version of Python for your platform in the [python docs](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python).
 
 #### Virtual Environment
 
-We recommend working within a virtual environment whenever using Python for projects. This keeps your dependencies for each project separate and organized. Instructions for setting up a virtual environment for your platform can be found in the [python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/).
+This is recommended working within a virtual environment whenever using Python for projects. This keeps your dependencies for each project separated and organized. Instructions for setting up a virtual environment for your platform can be found in the [python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/).
 
 #### PIP Dependencies
 
@@ -59,7 +59,7 @@ pip install -r requirements.txt
 
 #### Database Setup 
 
-Before the backend can be run, Postgres must be run on the system. To setup the database for the backend, run:
+Before the backend can be run, Postgres must be running on the system. To setup the database for the backend, run:
 
 ```
 dbcreate capstone
@@ -83,15 +83,7 @@ Before running the server, make sure you are using the created virtual environme
 <venv>$ python app.py
 ```
 
-#### Testing the backend API at Heroku
-
-Beside running and testing the backend API server in local machine. The server is also hosted at Heroku using gunicorn as the WSGI gateway server to forward requests to it. 
-
-The base URL of the application is:
-
-```
-https://ndfs-capstone.herokuapp.com/
-```
+#### Authentication and authorization
 
 Since authentication is handled by Auth0, the authentication information is passed back as an encrypted JWT. Clients use JWT to gain access to different APIs exposed by the backend server. The JWTs for the 3 different roles are stored in the setup.sh:
 
@@ -101,7 +93,17 @@ Since authentication is handled by Auth0, the authentication information is pass
 | Casting Director   | DIRECTOR_JWT        |
 | Executive Producer | PRODUCER_JWT        |
 
- To test the backend, you can use Postman or curl, for curl:
+#### Accessing the backend API at Heroku
+
+Beside running and testing the backend API server in local machine. The server is also hosted at Heroku using gunicorn as the WSGI gateway server to forward requests to it. 
+
+The base URL of the application is:
+
+```
+https://ndfs-capstone.herokuapp.com/
+```
+
+ To access the backend at Heroku, you can use Postman or curl, for example, for curl:
 
 ```
 source setup.sh
@@ -110,9 +112,9 @@ curl https://ndfs-capstone.herokuapp.com/movies -H "Authorization: bearer ${ASSI
 
 In here, it requests the backend server to return the list of movies produced by the casting agency.  The detailed description about each API, their expected input and output can be found in the [API endpoints](#api-endpoints) session.
 
-## Testing backend run in local machine
+#### Testing backend run in local machine
 
-To run test on the server running in local machine, make sure you are in the virtual environment you created, perform:
+To run tests on the server running in local machine, make sure you are in the virtual environment you created, perform:
 
 ```
 createdb capstone_test
@@ -138,8 +140,15 @@ After that, to run the test, do:
 
 #### Getting Started
 
-- Base URL: The backend app is hosted at `http://127.0.0.1:8080/` which is set as a proxy for frontend app.
-- Authentication: This application require JWT for authentications.
+- Base URL: The backend app is hosted at `http://localhost:8080/` which is set as a proxy for frontend app
+
+- Authentication: This application requires JWT for authentications
+
+  Note: In this subsection, it describes the endpoints of the system running in local machine. To access the system for live endpoints at Heroku. The base URL is:
+
+  ```
+  https://ndfs-capstone.herokuapp.com/
+  ```
 
 #### Error Handling
 
@@ -148,7 +157,7 @@ Errors are returned as JSON object as in the following format:
 ```
 {
   "error": 404,
-  "message": "not found",
+  "message": "resource not found",
   "success": false
 }
 
@@ -314,7 +323,7 @@ This app will return 5 error types when request failed:
     | name                 | string           |
     | age                  | integer          |
     | gender               | enum: "M" or "F" |
-    | movies_id (optional) | array            |
+    | movies_id (optional) | integer array    |
 
   - Sample call: 
 
@@ -349,7 +358,7 @@ This app will return 5 error types when request failed:
     | ------------ | ------------------- |
     | title        | string              |
     | date_release | string ("YYYYMMDD") |
-    | actors_id    | array               |
+    | actors_id    | integer array       |
 
   - Sample call: 
 
@@ -367,4 +376,72 @@ This app will return 5 error types when request failed:
     }
     ```
 
-    
+- <u>PATCH /actors/<integer: actor_id></u>
+
+  - Description:
+
+    - Update an actor with the specified actor_id in the system, return success in state or error otherwise
+
+  - Authorization:
+
+    - It requires "modify actors" permission
+
+  - The values pass in the post body are:
+
+    | name                 | type and value   |
+    | -------------------- | ---------------- |
+    | name                 | string           |
+    | age                  | integer          |
+    | gender               | enum: "M" or "F" |
+    | movies_id (optional) | integer array    |
+
+  - Sample call: 
+
+    ```
+    source setup.sh
+    curl -X PATCH localhost:8080/actors/29 -H "Authorization: bearer ${DIRECTOR_JWT}" -H "Content-type: application/json" -d '{"name":"Mangus", "age":30, "gender":"M"}'
+    ```
+
+  - Output:
+
+    ```
+    {
+      "actor_id": 29,
+      "success": true
+    }
+    ```
+
+- <u>PATCH /movies/<integer: movie_id</u>
+
+  - Description:
+
+    - Update a movie with the specified movie_id in the system, return success in state or error otherwise
+    - In passing the values into the system, actors_id must be passed
+
+  - Authorization:
+
+    - It requires "modify movies" permission
+
+  - The values pass in the post body are:
+
+    | name         | type and value      |
+    | ------------ | ------------------- |
+    | title        | string              |
+    | date_release | string ("YYYYMMDD") |
+    | actors_id    | integer array       |
+
+  - Sample call: 
+
+    ```
+    source setup.sh
+    curl -X PATCH localhost:8080/movies/11 -H "Authorization: bearer ${PRODUCER_JWT}" -H "Content-type: application/json" -d '{"title":"Genesis II", "date_release":"20200412", "actors_id":[29]}'
+    ```
+
+  - Output:
+
+    ```
+    {
+      "movie_id": 11,
+      "success": true
+    }
+    ```
